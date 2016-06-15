@@ -21,13 +21,13 @@ Before we dive in, let's go through a quick review of what it looks like to iter
 Input the following in your console. What does it print?
 
 ``` javascript
-const dogs = [
+var dogs = [
   { name: "Fido", age: 2 },
   { name: "Odie", age: 8 },
   { name: "Ralph", age: 4 }
 ]
 
-for (let i = 0, l = dogs.length; i < l; i++) {
+for (var i = 0, l = dogs.length; i < l; i++) {
   console.log(i)
 }
 ```
@@ -51,9 +51,9 @@ Now enter the above again, but change the log statement to `console.log(dogs[i])
 Which is great! But maybe we also want to look at each dog — let's start by taking one dog. Execute the following in your console:
 
 ``` javascript
-const dog = {name: "Fido", age: 2}
+var dog = {name: "Fido", age: 2}
 
-for (let i in dog) {
+for (var i in dog) {
   console.log(i)
 }
 ```
@@ -77,10 +77,10 @@ So what are the differences here between accessing elements in an array and acce
 - In an array, we most often iterate over the indexes of the array starting at index 0 and going up to index (length - 1).
 - In an object, we most often iterate over its keys. These are unordered, so we just go through all of them.
 - In an array, we use a standard `for` loop with three clauses:
-  1. `let i = 0, l = dogs.length`
+  1. `var i = 0, l = dogs.length`
   2. `i < l`
   3. `i++`
-- In an object, we can use a `for...in` loop to shorten our keystrokes a little: `for (let i in dog) { }`, in the example above.
+- In an object, we can use a `for...in` loop to shorten our keystrokes a little: `for (var i in dog) { }`, in the example above.
 
 Okay, after that refresher, are you ready to dive into some code?
 
@@ -116,7 +116,7 @@ If `iterable` _is_ an array, we want our function to behave like `Array.prototyp
 ``` javascript
 function forEach(iterable, callback) {
   if (Array.isArray(iterable)) {
-    for (let i = 0, l = iterable.length; i < l; i++) {
+    for (var i = 0, l = iterable.length; i < l; i++) {
       callback(iterable[i], i, iterable)
     }
   }
@@ -130,7 +130,7 @@ Now we can check if `iterable` is an object — we can use `typeof` here, since 
 ``` javascript
 function forEach(iterable, callback) {
   if (Array.isArray(iterable)) {
-    for (let i = 0, l = iterable.length; i < l; i++) {
+    for (var i = 0, l = iterable.length; i < l; i++) {
       callback(iterable[i], i, iterable)
     }
   } else if (typeof iterable === 'object') {
@@ -151,11 +151,11 @@ Just as in the loop for when `iterable` is an array, we pass the element, its ke
 ``` javascript
 function forEach(iterable, callback) {
   if (Array.isArray(iterable)) {
-    for (let i = 0, l = iterable.length; i < l; i++) {
+    for (var i = 0, l = iterable.length; i < l; i++) {
       callback(iterable[i], i, iterable)
     }
   } else if (typeof iterable === 'object') {
-    for (let key in iterable) {
+    for (var key in iterable) {
       callback(iterable[key], key, iterable)
     }
   }
@@ -171,7 +171,7 @@ We did it!
 You might ask why we don't just elide our checks into a simple
 
 ``` javascript
-for (let keyOrIndex in iterable) {
+for (var keyOrIndex in iterable) {
   callback(iterable[keyOrIndex], keyOrIndex, iterable)
 }
 ```
