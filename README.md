@@ -8,7 +8,7 @@ forEach Code-Along
 
 ## Why use `forEach`?
 
-`Array.prototype.forEach` provides a terse way to iterate over elements in an array, but it doesn't return anything on its own. Instead, it changes the objects in place and always returns `undefined`. As such, `Array.prototype.forEach` is most useful when we want to execute code that has _side effects_ on the elements that we're operating on.
+`forEach` provides a terse way to iterate over elements in an array, but it doesn't return anything on its own. Instead, it changes the objects in place and always returns `undefined`. As such, `forEach` is most useful when we want to execute code that has _side effects_ on the elements that we're operating on.
 
 Additionally, `Array.prototype.forEach` does not work with objects. So even though JavaScript lets us iterate over the key-value pairs in objects using `for` loops, we don't have a ready-to-hand way of doing so with the terseness of `Array.prototype.forEach`.
 
