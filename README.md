@@ -8,155 +8,186 @@ forEach Code-Along
 
 ## Why use `forEach`?
 
-`forEach` provides a terse way to iterate over elements in an array, but it doesn't return anything on its own. Instead, it changes the objects in place and always returns `undefined`. As such, `forEach` is most useful when we want to execute code that has _side effects_ on the elements that we're operating on.
+`forEach` provides a terse way to iterate over elements in an array, but it doesn't return anything on its own. Instead,
+it changes the objects in place and always returns `undefined`. As such, `forEach` is most useful when we want to execute
+code that has _side effects_ on the elements that we're operating on.
 
-Additionally, `Array.prototype.forEach` does not work with objects. So even though JavaScript lets us iterate over the key-value pairs in objects using `for` loops, we don't have a ready-to-hand way of doing so with the terseness of `Array.prototype.forEach`.
+Additionally, `forEach` does not work with objects. So even though JavaScript lets us iterate over the key-value pairs
+in objects using `for` loops, we don't have a ready-to-hand way of doing so with the terseness of `forEach`.
 
-Well, we don't _at the moment_ have such a way; by the end of this lesson, we'll have learned how to write a utility function that can iterate over both arrays and objects.
+Well, _right now_, we don't — by the end of this lesson, we'll have learned how to write a utility function that can
+iterate over arrays as well as objects.
 
 ## Objects vs. Arrays — Refresher
 
-Before we dive in, let's go through a quick review of what it looks like to iterate over an array versus what it looks like to iterate over an object. When we iterative over an array, we access each element according to its index.
+Before we dive in, let's go through a quick review of what it looks like to iterate over an array versus what it looks
+like to iterate over an object. When we iterate over an array, we access each element according to its index.
 
 Input the following in your console. What does it print?
 
-``` javascript
-var dogs = [
+```js
+const dogs = [
   { name: "Fido", age: 2 },
   { name: "Odie", age: 8 },
   { name: "Ralph", age: 4 }
-]
+];
 
-for (var i = 0, l = dogs.length; i < l; i++) {
-  console.log(i)
+for (let i = 0, l = dogs.length; i < l; i++) {
+  console.log(i);
 }
 ```
 
-You should see
+You should see:
 
-```javascript
+```
 0
 1
 2
 ```
 
-Now enter the above again, but change the log statement to `console.log(dogs[i])` If you've input the code correctly, you should see printed:
+Now enter the above again, but change the log statement to `console.log(dogs[i])`. This should result in the following
+output:
 
-``` javascript
+```
 {name: "Fido", age: 2}
 {name: "Odie", age: 8}
 {name: "Ralph", age: 4}
 ```
 
-Which is great! But maybe we also want to look at each dog — let's start by taking one dog. Execute the following in your console:
+Which is great! But maybe we also want to take a closer look at each dog. Let's take a step back and focus on Fido for
+now. Run the following code:
 
-``` javascript
-var dog = {name: "Fido", age: 2}
+```js
+const dog = { name: "Fido", age: 2 };
 
-for (var i in dog) {
-  console.log(i)
+for (const key in dog) {
+  console.log(key);
 }
 ```
 
-What did you see? You should have seen printed
+What you should see is:
 
-```bash
+```
 name
 age
 ```
 
-So now if we change the log statement to `console.log(dog[i])`, we should see
+This clearly illustrates that we're looping over the `dog` object's properties, and we're logging out the key of the
+key-value pair for each property. Now, let's access the value of the properties by changing the log statement to
+`console.log(dog[key])`:
 
-```bash
+```
 Fido
 2
 ```
 
-So what are the differences here between accessing elements in an array and accessing key-value pairs in an object?
+So, what are the differences here between accessing elements in an array and accessing key-value pairs in an object?
 
-- In an array, we most often iterate over the indexes of the array starting at index 0 and going up to index (length - 1).
+- In an array, we most often iterate over the indexes of the array starting at index 0 and going through all the elements.
 - In an object, we most often iterate over its keys. These are unordered, so we just go through all of them.
 - In an array, we use a standard `for` loop with three clauses:
-  1. `var i = 0, l = dogs.length`
+  1. `let i = 0, l = dogs.length`
   2. `i < l`
   3. `i++`
-- In an object, we can use a `for...in` loop to shorten our keystrokes a little: `for (var i in dog) { }`, in the example above.
+- In an object, we can use a `for...in` loop to shorten our keystrokes a little: `for (const key in dog) { }`, as seen
+in the example above.
 
-Okay, after that refresher, are you ready to dive into some code?
+Okay, after that refresher, let's dive into some code!
 
 ## Each and Every One
 
-Let's start by defining our function signature — we know that it's going to take something that we can iterate over, and a function to iterate with. The thing that we iterate over can be either an array or an object, so we want to be generic with how we name it. (In other languages, we could specify a type; but JavaScript does not allow us such safety, so the best we can do is name things precisely and type-check on the fly.) Let's call that thing `iterable`. The function, as we know, is just a callback — so we can call it `callback`.
+Let's start by defining our function signature — we know that it's going to take something that we can iterate over (the
+`iterable`), and a function to iterate with (the `callback`). The thing that we iterate over can be either an array or
+an object, so we want to be generic with how we name it. In other languages, we could specify a type; but JavaScript
+does not allow us such safety; so the best we can do is name things precisely and type-check on the fly.
 
-``` javascript
+```js
 function forEach(iterable, callback) {}
 ```
 
-Note that `forEach` does not conflict with `Array.prototype.forEach` because the latter is just a property of `Array.prototype` — it is not a global function.
+Note that `forEach` does not conflict with `Array.prototype.forEach` because the latter is just a property of
+`Array.prototype` — it is not a global function.
 
-Now, inside our `forEach` function, we want to do one thing if `iterable` is an array, and another thing if `iterable` is an object. But here's the thing: we can't just use the `typeof` operator, because `typeof []` is `'object'`.
+Now, inside our `forEach` function, we want to do one thing if `iterable` is an array, and another thing if `iterable`
+is an object. But here's the catch: we can't just use the `typeof` operator, because `typeof []` is `'object'`. That's
+not very helpful, since that provides us with no way to tell the difference between an array and an object...
 
-But for a long while now, JavaScript has thought of this — we can use a method attached to `Array`, called — wait for it — `isArray()`. We use it like so:
+Thankfully, JavaScript has thought of this. We can use a method attached to `Array`, called — wait for it — `isArray()`.
+We use it like so:
 
-``` javascript
-Array.isArray([]) // true
-Array.isArray(1)  // false
+```js
+Array.isArray([]); // true
+Array.isArray(1);  // false
 ```
 
 So let's dive into our function and first check if `iterable` is an array.
 
-``` javascript
+```js
 function forEach(iterable, callback) {
   if (Array.isArray(iterable)) {
+
   }
+}
 ```
 
-If `iterable` _is_ an array, we want our function to behave like `Array.prototype.forEach`. Recall that the built-in `forEach` passes the current element, the element's index, and the whole array to the callback — we should do the same.
+If `iterable` _is_ an array, we want our function to behave like `Array.prototype.forEach`. Recall that the built-in
+`forEach` passes the current element, the element's index, and the whole array to the callback. Since we're replicating
+that functionality, we should do the same.
 
-``` javascript
+```js
 function forEach(iterable, callback) {
   if (Array.isArray(iterable)) {
-    for (var i = 0, l = iterable.length; i < l; i++) {
-      callback(iterable[i], i, iterable)
+    for (let i = 0, l = iterable.length; i < l; i++) {
+      const element = iterable[i];
+      callback(element, i, iterable);
     }
   }
 }
 ```
 
-The signature of our `callback` might not specify all three arguments, but that's okay! We leave it up to the implementation of `callback` to decide what arguments it cares about — inside our `forEach`, we simply pass along everything that's relevant.
+The signature of our `callback` might not specify all three arguments, but that's okay! We leave it up to the
+implementation of `callback` to decide what arguments it cares about. Inside our `forEach`, we simply pass along
+everything that's relevant.
 
-Now we can check if `iterable` is an object — we can use `typeof` here, since if our code has gotten this far, we know that `iterable` is not an array (and so won't give a false positive.
+Now that we've handled the array part, we can check if `iterable` is an object. To do so, we can use `typeof` here —
+if our code has gotten this far, we know that `iterable` is not an array and won't give a false positive.
 
-``` javascript
+```js
 function forEach(iterable, callback) {
   if (Array.isArray(iterable)) {
-    for (var i = 0, l = iterable.length; i < l; i++) {
-      callback(iterable[i], i, iterable)
-    }
-  } else if (typeof iterable === 'object') {
-  }
-}
-```
-
-So what do we do inside that `else if` block? Well, we iterate:
-
-``` javascript
-for (let key in iterable) {
-  callback(iterable[key], key, iterable)
-}
-```
-
-Just as in the loop for when `iterable` is an array, we pass the element, its key in the object (remember, the "keys" in an array are just the indexes), and the whole iterable. So now our whole function looks like this:
-
-``` javascript
-function forEach(iterable, callback) {
-  if (Array.isArray(iterable)) {
-    for (var i = 0, l = iterable.length; i < l; i++) {
-      callback(iterable[i], i, iterable)
+    for (let i = 0, l = iterable.length; i < l; i++) {
+      const element = iterable[i];
+      callback(element, i, iterable);
     }
   } else if (typeof iterable === 'object') {
-    for (var key in iterable) {
-      callback(iterable[key], key, iterable)
+
+  }
+}
+```
+
+So what do we do inside that `else if` block? Well, we iterate the object, just like we did before:
+
+```js
+for (const key in iterable) {
+  const value = iterable[key];
+  callback(value, key, iterable);
+}
+```
+
+Just as in the array loop, we pass the element, the key of the current property (remember, the "keys" in an array are
+just the indexes), and the whole iterable. So now our whole function looks like this:
+
+```js
+function forEach(iterable, callback) {
+  if (Array.isArray(iterable)) {
+    for (let i = 0, l = iterable.length; i < l; i++) {
+      const element = iterable[i];
+      callback(element, i, iterable);
+    }
+  } else if (typeof iterable === 'object') {
+    for (const key in iterable) {
+      const value = iterable[key];
+      callback(value, key, iterable);
     }
   }
 }
@@ -168,14 +199,18 @@ We did it!
 
 ![yay!](http://i.giphy.com/l0K4m0mzkJDAIdhHW.gif)
 
-You might ask why we don't just elide our checks into a simple
+You might ask why we don't just simplify our checks into something a lot simpler:
 
-``` javascript
-for (var keyOrIndex in iterable) {
-  callback(iterable[keyOrIndex], keyOrIndex, iterable)
+```js
+for (const keyOrIndex in iterable) {
+  callback(iterable[keyOrIndex], keyOrIndex, iterable);
 }
 ```
 
-We could do that, and it would, for the most part, work. The trouble is, we don't set properties of arrays the same way we set properties of objects. So if we attempted to iterate over an array with `for...in`, but had only explicitly set some distant index, we would only see the value for _that_ index. This [StackOverflow post](http://stackoverflow.com/questions/500504/why-is-using-for-in-with-array-iteration-a-bad-idea) provides a few examples for why this is a bad idea.
+We could do that, and it would, for the most part, work. The trouble is, we don't set properties of arrays the same way
+we set properties of objects. So if we attempted to iterate over an array with `for...in`, but had only explicitly set
+some distant index, we would only see the value for _that_ index. This
+[StackOverflow post](http://stackoverflow.com/questions/500504/why-is-using-for-in-with-array-iteration-a-bad-idea)
+provides a few examples for why this is a bad idea.
 
-Now if you run `learn submit`, your tests should pass and you should be ready to go! Well done!
+Lastly, run `learn submit`. Your tests should pass and you should be ready to go! Well done!
