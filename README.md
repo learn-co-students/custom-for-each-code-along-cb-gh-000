@@ -185,10 +185,10 @@ for (const keyOrIndex in iterable) {
 }
 ```
 
-We could do that, and it would, for the most part, work. The trouble is, we don't set properties of arrays the same way we set properties of objects. So if we attempted to iterate over an array with `for...in`, but had only explicitly set some distant index, we would only see the value for _that_ index. This
-[StackOverflow post](http://stackoverflow.com/questions/500504/why-is-using-for-in-with-array-iteration-a-bad-idea)
-provides a few examples for why this is a bad idea.
+We could do that, and it would, for the most part, work. The trouble is, we don't set properties of arrays the same way we set properties of objects. So if we attempted to iterate over an array with `for...in`, but had only explicitly set some distant index, we would only see the value for _that_ index. This [StackOverflow post](http://stackoverflow.com/questions/500504/why-is-using-for-in-with-array-iteration-a-bad-idea) provides a few examples for why this is a bad idea.
 
 Lastly, run `learn submit`. Your tests should pass and you should be ready to go! Well done!
+
+<p class='util--hide'>View <a href='https://learn.co/lessons/custom-for-each-code-along'>Custom forEach() </a> on Learn.co and start learning to code for free.</p>
 
 <p class='util--hide'>View <a href='https://learn.co/lessons/custom-for-each-code-along'>Custom forEach() </a> on Learn.co and start learning to code for free.</p>
