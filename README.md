@@ -1,5 +1,4 @@
-forEach Code-Along
----
+# forEach Code-Along
 
 ## Objectives
 
@@ -189,6 +188,4 @@ We could do that, and it would, for the most part, work. The trouble is, we don'
 
 Lastly, run `learn submit`. Your tests should pass and you should be ready to go! Well done!
 
-<p class='util--hide'>View <a href='https://learn.co/lessons/custom-for-each-code-along'>Custom forEach() </a> on Learn.co and start learning to code for free.</p>
-
-<p class='util--hide'>View <a href='https://learn.co/lessons/custom-for-each-code-along'>Custom forEach() </a> on Learn.co and start learning to code for free.</p>
+<p class='util--hide'>View <a href='https://learn.co/lessons/custom-for-each-code-along'>Custom forEach()</a> on Learn.co and start learning to code for free.</p>
