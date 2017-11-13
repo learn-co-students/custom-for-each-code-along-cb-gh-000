@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "description": "Practice abstracting loops in JavaScript on Learn",
   "engines": {
-    "node": "6.x",
     "npm": "3.x"
   },
   "main": "index.js",
