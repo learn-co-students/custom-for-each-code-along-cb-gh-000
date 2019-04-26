@@ -14,6 +14,7 @@ function forEach(iterable, callback)
     {
       const value = iterable[key]
       callback(value, key, iterable)
+      //
     }
   }
 }
